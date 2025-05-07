@@ -1,5 +1,7 @@
 package com.example.springtest.memo.controller;
 
+import com.example.springtest.memo.customexception.ExceptionTestEnum;
+import com.example.springtest.memo.customexception.TestException;
 import com.example.springtest.memo.dto.MemoRequestDto;
 import com.example.springtest.memo.dto.MemoResponseDto;
 import com.example.springtest.memo.entity.Memo;
@@ -48,16 +50,15 @@ public class MemoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<MemoResponseDto> updateMemoTitleById(@PathVariable Long id, @RequestBody MemoRequestDto dto) {
+    public ResponseEntity<MemoResponseDto> updateMemoTitleById(@PathVariable Long id, @RequestBody MemoRequestDto dto) throws TestException {
         Memo memo = memoList.get(id);
 
         if (memo == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new TestException(ExceptionTestEnum.Exceptions.TESTA, HttpStatus.NOT_FOUND, "테스트예외 발생");
         }
         if (dto.getTitle() == null || dto.getContents() != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
         memo.updateTitle(dto);
 
         return new ResponseEntity<>(new MemoResponseDto(memo), HttpStatus.OK);
